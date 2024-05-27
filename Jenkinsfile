@@ -6,6 +6,10 @@ pipeline{
         string(name: 'SPEC', defaultValue: "cypress/Integration/Testing/*.js", description: "Enter the script name")
         choice(name: 'BROWSER', choices: ['chrome', 'edge', 'electron'], description: "Which browser wanna execute")
     }
+
+    options{
+        ansiColor('xterm')
+    }
     
     stages{
         stage('Building'){
@@ -16,7 +20,8 @@ pipeline{
 
         stage("Testing"){
             steps{
-                bat "npm i"
+                bat "npm ci"
+                bat "npx cypress install"
                 bat "npx cypress run --browser ${BROWSER} --spec ${SPEC}"
             }
         }
@@ -26,11 +31,19 @@ pipeline{
                 echo "Deploying project"
             }
         }
-    }
 
-    post{
-        always{
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'cypress/report' ,reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
+        stage("publish report"){
+            steps{
+                 publishHTML([
+                allowMissing: false, 
+                alwaysLinkToLastBuild: true, 
+                keepAll: false, 
+                reportDir: "cypress", 
+                reportFiles: "index.html", 
+                reportName: 'HTML Report', 
+                reportTitles: ''
+                ])
+            }
         }
     }
 }
