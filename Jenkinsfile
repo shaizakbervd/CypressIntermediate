@@ -6,10 +6,6 @@ pipeline{
         string(name: 'SPEC', defaultValue: "cypress/Integration/Testing/*.js", description: "Enter the script name")
         choice(name: 'BROWSER', choices: ['chrome', 'edge', 'electron'], description: "Which browser wanna execute")
     }
-
-    options{
-        ansiColor('xterm')
-    }
     
     stages{
         stage('Building'){
